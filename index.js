@@ -20,12 +20,27 @@ async function run() {
     try {
         await client.connect();
         const partCollection = await client.db('certo_parts').collection('parts');
+        const reviewCollection = await client.db('certo_parts').collection('reviews');
+        const pricingCollection = await client.db('certo_parts').collection('pricings');
 
         // get all parts 
         app.get('/parts', async (req, res) => {
             const query = {};
             const parts = await partCollection.find(query).toArray();
             res.send(parts);
+        })
+        // get all reviews 
+        app.get('/reviews', async(req, res) => {
+            const query = {};
+            const reviews = await reviewCollection.find(query).toArray();
+            res.send(reviews);
+        })
+        
+        // get all pricing services 
+        app.get('/pricing', async(req, res) => {
+            const query = {};
+            const result = await pricingCollection.find(query).toArray();
+            res.send(result);
         })
 
 
