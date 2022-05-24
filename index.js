@@ -22,6 +22,7 @@ async function run() {
         const partCollection = await client.db('certo_parts').collection('parts');
         const reviewCollection = await client.db('certo_parts').collection('reviews');
         const pricingCollection = await client.db('certo_parts').collection('pricings');
+        const orderCollection = await client.db('certo_parts').collection('orders');
 
         // get all parts 
         app.get('/parts', async (req, res) => {
@@ -50,6 +51,14 @@ async function run() {
             const product = await partCollection.findOne(query);
             res.send(product)
         })
+
+        //  order data insertOne
+        app.post('/orders', async(req,res) => {
+            const order = req.body;
+            const result = await orderCollection.insertOne(order);
+            res.send(result)
+        }) 
+
 
 
 
