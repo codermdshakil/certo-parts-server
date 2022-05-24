@@ -31,33 +31,41 @@ async function run() {
             res.send(parts);
         })
         // get all reviews 
-        app.get('/reviews', async(req, res) => {
+        app.get('/reviews', async (req, res) => {
             const query = {};
             const reviews = await reviewCollection.find(query).toArray();
             res.send(reviews);
         })
-        
+
         // get all pricing services 
-        app.get('/pricing', async(req, res) => {
+        app.get('/pricing', async (req, res) => {
             const query = {};
             const result = await pricingCollection.find(query).toArray();
             res.send(result);
         })
 
         // get a single parts 
-        app.get('/parts/:id', async(req,res) => {
+        app.get('/parts/:id', async (req, res) => {
             const id = req.params.id;
-            const query = {_id:ObjectId(id)};
+            const query = { _id: ObjectId(id) };
             const product = await partCollection.findOne(query);
             res.send(product)
         })
 
         //  order data insertOne
-        app.post('/orders', async(req,res) => {
+        app.post('/orders', async (req, res) => {
             const order = req.body;
             const result = await orderCollection.insertOne(order);
             res.send(result)
-        }) 
+        })
+
+        // get all order on email based 
+        app.get('/orders', async (req, res) => {
+            const email = req.query.email;
+            const query = {email:email};
+            const result = await orderCollection.find(query).toArray();
+            res.send(result);
+        })
 
 
     }
@@ -75,11 +83,11 @@ run().catch(console.dir);
 
 
 
-    app.get('/', (req, res) => {
-        res.send('Yah my bicycle server is running ')
-    })
+app.get('/', (req, res) => {
+    res.send('Yah my bicycle server is running ')
+})
 
-    app.listen(port, () => {
-        console.log('Listening to port', port)
-    })
+app.listen(port, () => {
+    console.log('Listening to port', port)
+})
 
