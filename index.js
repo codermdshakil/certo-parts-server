@@ -60,8 +60,6 @@ async function run() {
         }) 
 
 
-
-
     }
     catch (e) {
         console.log(e);
@@ -78,7 +76,7 @@ run().catch(console.dir);
 
 
     app.get('/', (req, res) => {
-        res.send('Yah my bicycle server is running some change ')
+        res.send('Yah my bicycle server is running ')
     })
 
     app.listen(port, () => {
