@@ -23,6 +23,7 @@ async function run() {
         const reviewCollection = await client.db('certo_parts').collection('reviews');
         const pricingCollection = await client.db('certo_parts').collection('pricings');
         const orderCollection = await client.db('certo_parts').collection('orders');
+        const userInformationCollection = await client.db('certo_parts').collection('userInformation');
 
         // get all parts 
         app.get('/parts', async (req, res) => {
@@ -76,11 +77,37 @@ async function run() {
         })
 
         // insetOne review 
-        app.post('/reviews', async(req, res) => {
+        app.post('/reviews', async (req, res) => {
             const newReview = req.body;
             const result = await reviewCollection.insertOne(newReview);
             res.send(result);
         })
+
+        // userInformation 
+        app.put('/userInfo/:email', async (req, res) => {
+            const email = req.params.email;
+            const userInfo = req.body;
+            const filter = { userEmail: email };
+            const options = { upsert: true };
+            const updateDoc = {
+                $set: {
+                    userName: userInfo.userName,
+                    userEmail: userInfo.userEmail,
+                    userPhone: userInfo.userPhone,
+                    userEducation: userInfo.userEducation,
+                    userAddress: userInfo.userAddress,
+                    userLocation: userInfo.userLocation,
+                    userLinkedinUrl: userInfo.userLinkedinUrl,
+                }
+            }
+
+            const result = await userInformationCollection.updateOne(filter, updateDoc, options);
+            res.send(result);
+
+        })
+
+       
+
 
     }
     catch (e) {
