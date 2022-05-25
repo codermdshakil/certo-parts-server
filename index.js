@@ -94,6 +94,7 @@ async function run() {
                     userName: userInfo.userName,
                     userEmail: userInfo.userEmail,
                     userPhone: userInfo.userPhone,
+                    userImg: userInfo.userImg,
                     userEducation: userInfo.userEducation,
                     userAddress: userInfo.userAddress,
                     userLocation: userInfo.userLocation,
@@ -113,8 +114,6 @@ async function run() {
             const result = await userInformationCollection.findOne(query);
             res.send(result);
         })
-
-
     }
     catch (e) {
         console.log(e);
