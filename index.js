@@ -94,7 +94,6 @@ async function run() {
                     userName: userInfo.userName,
                     userEmail: userInfo.userEmail,
                     userPhone: userInfo.userPhone,
-                    userImg: userInfo.userImg,
                     userEducation: userInfo.userEducation,
                     userAddress: userInfo.userAddress,
                     userLocation: userInfo.userLocation,
