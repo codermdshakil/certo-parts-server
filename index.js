@@ -106,7 +106,13 @@ async function run() {
 
         })
 
-       
+        // get updated user 
+        app.get('/userInfo/:email', async (req, res) => {
+            const email = req.params.email;
+            const query = {userEmail:email};
+            const result = await userInformationCollection.findOne(query);
+            res.send(result);
+        })
 
 
     }
