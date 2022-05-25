@@ -67,6 +67,7 @@ async function run() {
             res.send(result);
         })
 
+        // delete a order 
         app.delete('/orders/:id', async (req, res) => {
             const id = req.params.id;
             const query = { _id: ObjectId(id) };
@@ -74,6 +75,12 @@ async function run() {
             res.send(result);
         })
 
+        // insetOne review 
+        app.post('/reviews', async(req, res) => {
+            const newReview = req.body;
+            const result = await reviewCollection.insertOne(newReview);
+            res.send(result);
+        })
 
     }
     catch (e) {
