@@ -69,6 +69,15 @@ async function run() {
             const parts = await partCollection.find(query).toArray();
             res.send(parts);
         })
+
+        // all a product 
+        app.post('/parts', async (req, res) => {
+            const newProduct = req.body;
+            console.log(newProduct)
+            const result = await partCollection.insertOne(newProduct);
+            res.send(result)
+        })
+
         // get all reviews 
         app.get('/reviews', async (req, res) => {
             const query = {};
