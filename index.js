@@ -1,6 +1,7 @@
 const express = require('express');
 const app = express();
 const cors = require('cors');
+const jwt = require('jsonwebtoken');
 const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 require('dotenv').config()
 const port = process.env.PORT || 5000;
@@ -19,11 +20,30 @@ const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology:
 async function run() {
     try {
         await client.connect();
+        const usersCollection = await client.db('certo_parts').collection('users');
         const partCollection = await client.db('certo_parts').collection('parts');
         const reviewCollection = await client.db('certo_parts').collection('reviews');
         const pricingCollection = await client.db('certo_parts').collection('pricings');
         const orderCollection = await client.db('certo_parts').collection('orders');
         const userInformationCollection = await client.db('certo_parts').collection('userInformation');
+
+
+
+        app.put('/user/:email', async (req, res) => {
+            const email = req.params.email;
+            const user = req.body;
+            const filter = { email: email };
+            const options = { upsert: true };
+            const updateDoc = {
+                $set: user,
+            };
+            const result = await usersCollection.updateOne(filter, updateDoc, options);
+
+            const token = jwt.sign({ email: email }, process.env.ACCESS_SECRET_TOEKN, { expiresIn: '1h' })
+            res.send({ result, token });
+
+        })
+
 
         // get all parts 
         app.get('/parts', async (req, res) => {
@@ -109,7 +129,7 @@ async function run() {
         // get updated user 
         app.get('/userInfo/:email', async (req, res) => {
             const email = req.params.email;
-            const query = {userEmail:email};
+            const query = { userEmail: email };
             const result = await userInformationCollection.findOne(query);
             res.send(result);
         })
