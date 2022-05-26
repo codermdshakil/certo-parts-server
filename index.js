@@ -5,6 +5,7 @@ const jwt = require('jsonwebtoken');
 const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
 require('dotenv').config()
 const port = process.env.PORT || 5000;
+const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY)
 
 
 // middlewares
@@ -127,6 +128,22 @@ async function run() {
             else {
                 return res.status(403).send({ message: "Forbidden access" })
             }
+        })
+
+        // get all orders 
+        app.get('/allorders', async(req, res) => {
+            const query = {};
+            const result = await orderCollection.find(query).toArray();
+            res.send(result);
+        })
+
+
+        app.get('/orders/:id', verifyJWT ,async(req, res) => {
+            const id = req.params.id;
+            const query = {_id:ObjectId(id)};
+            const result = await orderCollection.findOne(query);
+            res.send(result);
+
         })
 
         // delete a order 
