@@ -78,6 +78,14 @@ async function run() {
             res.send(result)
         })
 
+        // delete product 
+        app.delete('/parts/:id', async(req, res) => {
+            const id = req.params.id;
+            const query = {_id:ObjectId(id)};
+            const result = await partCollection.deleteOne(query);
+            res.send(result);
+        })
+
         // get all reviews 
         app.get('/reviews', async (req, res) => {
             const query = {};
