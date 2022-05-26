@@ -158,6 +158,12 @@ async function run() {
         })
 
         // get all users 
+        app.get('/users', async (req, res) => {
+            const query = {};
+            const result = await usersCollection.find(query).toArray();
+            res.send(result)
+        })
+
         app.put('/users/admin/:email', verifyJWT, async (req, res) => {
             const email = req.params.email;
             const requester = req.decoded.email;
@@ -174,6 +180,14 @@ async function run() {
                 res.status(403).send({ message: 'forbidden' });
             }
 
+        })
+
+        // get admin
+        app.get('/admin/:email', async (req, res) => {
+            const email = req.params.email;
+            const user = await usersCollection.findOne({ email: email });
+            const isAdmin = user.role === 'admin';
+            res.send({ admin: isAdmin });
         })
 
 
