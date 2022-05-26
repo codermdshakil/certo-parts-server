@@ -107,8 +107,8 @@ async function run() {
                 const result = await orderCollection.find(query).toArray();
                 return res.send(result);
             }
-            else{
-                return res.status(403).send({message:"Forbidden access"})
+            else {
+                return res.status(403).send({ message: "Forbidden access" })
             }
         })
 
@@ -155,6 +155,13 @@ async function run() {
             const query = { userEmail: email };
             const result = await userInformationCollection.findOne(query);
             res.send(result);
+        })
+
+        // get all users 
+        app.get('/users', verifyJWT, async (req, res) => {
+            const query = {};
+            const result = await usersCollection.find(query).toArray();
+            res.send(result)
         })
     }
     catch (e) {
