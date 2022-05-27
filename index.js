@@ -193,14 +193,6 @@ async function run() {
 
         })
 
-        // delete product 
-        app.delete('/orders/:id', verifyJWT, async (req, res) => {
-            const id = req.params.id;
-            const query = { _id: ObjectId(id) };
-            const result = await orderCollection.deleteOne(query);
-            res.send(result);
-        })
-
 
         // delete a order 
         app.delete('/orders/:id', async (req, res) => {
