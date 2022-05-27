@@ -47,18 +47,18 @@ async function run() {
         const userInformationCollection = await client.db('certo_parts').collection('userInformation');
         const paymentCollection = await client.db('certo_parts').collection('allpayments');
 
-        app.post('/create-payment-intent',verifyJWT ,async (req, res) => {
+        app.post('/create-payment-intent', verifyJWT, async (req, res) => {
             const book = req.body;
             const price = book.productPrice;
             const amount = price * 100;
             const paymentIntent = await stripe.paymentIntents.create({
                 amount: amount,
                 currency: "usd",
-                payment_method_types:['card']
+                payment_method_types: ['card']
 
             });
 
-            res.send({clientSecret:paymentIntent.client_secret})
+            res.send({ clientSecret: paymentIntent.client_secret })
         });
 
 
@@ -160,22 +160,41 @@ async function run() {
 
         })
 
-        app.patch('/orders/:id', verifyJWT, async(req, res) => {
+        app.patch('/orders/:id', verifyJWT, async (req, res) => {
             const id = req.params.id;
             const payment = req.body;
             console.log(payment)
-            const filter = {_id:ObjectId(id)};
+            const filter = { _id: ObjectId(id) };
             const updatedDoc = {
                 $set: {
-                    paid:true,
-                    status:"Pending",
-                    transactionId:payment.transactionId
+                    paid: true,
+                    status: "Pending",
+                    transactionId: payment.transactionId
                 }
             }
             const insetToPayments = await paymentCollection.insertOne(payment);
             const result = await orderCollection.updateOne(filter, updatedDoc);
             res.send(result);
         })
+
+        // update product status
+
+        app.put('/orders/:id', verifyJWT, async (req, res) => {
+            const id = req.params.id;
+            const updatedStatus = req.body;
+            console.log(updatedStatus)
+            const filter = { _id: ObjectId(id) };
+            const options = { upsert: true };
+            const updateDoc = {
+                $set: {
+                    status: updatedStatus.status,
+                }
+            }
+            const result = await orderCollection.updateOne(filter, updateDoc, options);
+            res.send(result);
+
+        })
+
 
         // delete a order 
         app.delete('/orders/:id', async (req, res) => {
