@@ -178,11 +178,9 @@ async function run() {
         })
 
         // update product status
-
         app.put('/orders/:id', verifyJWT, async (req, res) => {
             const id = req.params.id;
             const updatedStatus = req.body;
-            console.log(updatedStatus)
             const filter = { _id: ObjectId(id) };
             const options = { upsert: true };
             const updateDoc = {
@@ -197,7 +195,7 @@ async function run() {
 
 
         // delete a order 
-        app.delete('/orders/:id', async (req, res) => {
+        app.delete('/orders/:id', verifyJWT, async (req, res) => {
             const id = req.params.id;
             const query = { _id: ObjectId(id) };
             const result = await orderCollection.deleteOne(query);
