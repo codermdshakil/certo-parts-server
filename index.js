@@ -45,9 +45,7 @@ async function run() {
         const pricingCollection = await client.db('certo_parts').collection('pricings');
         const orderCollection = await client.db('certo_parts').collection('orders');
         const userInformationCollection = await client.db('certo_parts').collection('userInformation');
-
-
-
+        const paymentCollection = await client.db('certo_parts').collection('allpayments');
 
         app.post('/create-payment-intent',verifyJWT ,async (req, res) => {
             const book = req.body;
@@ -160,6 +158,23 @@ async function run() {
             const result = await orderCollection.findOne(query);
             res.send(result);
 
+        })
+
+        app.patch('/orders/:id', verifyJWT, async(req, res) => {
+            const id = req.params.id;
+            const payment = req.body;
+            console.log(payment)
+            const filter = {_id:ObjectId(id)};
+            const updatedDoc = {
+                $set: {
+                    paid:true,
+                    status:"Pending",
+                    transactionId:payment.transactionId
+                }
+            }
+            const insetToPayments = await paymentCollection.insertOne(payment);
+            const result = await orderCollection.updateOne(filter, updatedDoc);
+            res.send(result);
         })
 
         // delete a order 
