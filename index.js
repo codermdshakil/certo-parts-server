@@ -1,11 +1,11 @@
 const express = require('express');
 const app = express();
 const cors = require('cors');
+const port = process.env.PORT || 5000;
 const jwt = require('jsonwebtoken');
 const { MongoClient, ServerApiVersion, ObjectId } = require('mongodb');
-require('dotenv').config()
-const port = process.env.PORT || 5000;
-const stripe = require("stripe")(process.env.STRIPE_SECRET_KEY)
+require('dotenv').config();
+const stripe = require('stripe')(process.env.STRIPE_SECRET_KEY);
 
 
 // middlewares
@@ -48,6 +48,23 @@ async function run() {
 
 
 
+
+        app.post('/create-payment-intent',verifyJWT ,async (req, res) => {
+            const book = req.body;
+            const price = book.productPrice;
+            const amount = price * 100;
+            const paymentIntent = await stripe.paymentIntents.create({
+                amount: amount,
+                currency: "usd",
+                payment_method_types:['card']
+
+            });
+
+            res.send({clientSecret:paymentIntent.client_secret})
+        });
+
+
+
         app.put('/user/:email', async (req, res) => {
             const email = req.params.email;
             const user = req.body;
@@ -62,7 +79,6 @@ async function run() {
             res.send({ result, token });
 
         })
-
 
         // get all parts 
         app.get('/parts', async (req, res) => {
@@ -80,9 +96,9 @@ async function run() {
         })
 
         // delete product 
-        app.delete('/parts/:id', async(req, res) => {
+        app.delete('/parts/:id', async (req, res) => {
             const id = req.params.id;
-            const query = {_id:ObjectId(id)};
+            const query = { _id: ObjectId(id) };
             const result = await partCollection.deleteOne(query);
             res.send(result);
         })
@@ -131,16 +147,16 @@ async function run() {
         })
 
         // get all orders 
-        app.get('/allorders', async(req, res) => {
+        app.get('/allorders', async (req, res) => {
             const query = {};
             const result = await orderCollection.find(query).toArray();
             res.send(result);
         })
 
 
-        app.get('/orders/:id', verifyJWT ,async(req, res) => {
+        app.get('/orders/:id', verifyJWT, async (req, res) => {
             const id = req.params.id;
-            const query = {_id:ObjectId(id)};
+            const query = { _id: ObjectId(id) };
             const result = await orderCollection.findOne(query);
             res.send(result);
 
