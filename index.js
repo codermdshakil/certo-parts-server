@@ -202,6 +202,14 @@ async function run() {
             res.send(result);
         })
 
+        // delete a order 
+        app.delete('/users/:id', verifyJWT ,async (req, res) => {
+            const id = req.params.id;
+            const query = { _id: ObjectId(id) };
+            const result = await usersCollection.deleteOne(query);
+            res.send(result);
+        })
+
         // insetOne review 
         app.post('/reviews', async (req, res) => {
             const newReview = req.body;
